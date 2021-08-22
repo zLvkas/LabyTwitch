@@ -1,0 +1,9 @@
+{
+  "uuid": "%uuid%",
+  "name": "LabyTwitch",
+  "mainClass": "com.github.zlvkas.laby.twitch.LabyTwitch",
+  "author": "Lvkas_",
+  "description": "Displays the twitch followers count of a specified channel.",
+  "icon": "https://raw.githubusercontent.com/zLvkas/LabyTwitch/master/assets/logo.png",
+  "category": 2
+}
