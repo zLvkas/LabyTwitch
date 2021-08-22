@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "https://maven.minecraftforge.net"
+        }
+
+        dependencies {
+            classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        }
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
+dependencies {
+    compileOnly files('../libs/lm_api_mc1.8.9.jar')
+    compileOnly("org.jetbrains:annotations:21.0.1")
+}
+
+minecraft {
+    version = "1.8.9-11.15.1.1855"
+    runDir = "run"
+    mappings = "stable_20"
+}

@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+defaultTasks 'clean', 'build'
+
+allprojects {
+    version = "1.0"
+    group = "com.github.zlvkas"
+
+    plugins.apply("java")
+
+    tasks.withType(JavaCompile) {
+        targetCompatibility = '1.8'
+        sourceCompatibility = '1.8'
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+}

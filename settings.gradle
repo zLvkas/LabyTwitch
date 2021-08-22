@@ -1,0 +1,3 @@
+include 'addon-core'
+include 'addon-1.8'
+include 'addon-1.16'

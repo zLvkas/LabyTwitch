@@ -1,0 +1,122 @@
+buildscript {
+    repositories {
+        maven { url = "https://maven.minecraftforge.net" }
+        maven { url = 'https://repo.spongepowered.org/maven' }
+        maven {
+            name = 'impactdevelopment-repo'
+            url = 'https://impactdevelopment.github.io/maven/'
+        }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'com.github.ImpactDevelopment', name: 'ForgeGradle', version: '3.0.115'
+        classpath group: 'com.github.ImpactDevelopment', name: 'MixinGradle', version: '0.6.2'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
+
+compileJava.options.encoding = "UTF-8"
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+def mcpVersion = [channel: 'snapshot', version: '20201028-1.16.3']
+
+mixin {
+    defaultObfuscationEnv searge
+    add sourceSets.main, "videochat.refmap.json"
+}
+
+minecraft {
+    mappings mcpVersion
+
+    if (getProject().hasProperty("forge")) {
+        reobfMappings 'searge'
+    } else {
+        reobfMappings 'notch'
+    }
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            main "launch.AddonLauncher"
+
+            environment 'assetIndex', '{asset_index}'
+            environment 'assetDirectory', downloadAssets.output
+            environment 'nativesDirectory', extractNatives.output
+
+            environment 'tweakClass', 'net.labymod.vanilla.LabyModTweaker'
+
+            jvmArg('-DdebugMode=true')
+            jvmArg('-Daddonresources=addon.json')
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "spongepowered"
+        url = "https://repo.spongepowered.org/maven"
+    }
+    maven {
+        name = 'impactdevelopment-repo'
+        url = 'https://impactdevelopment.github.io/maven/'
+    }
+    maven {
+        name = "m2-dv8tion"
+        url = "https://m2.dv8tion.net/releases"
+    }
+}
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+dependencies {
+    compile(files('../libs/lm_api_mc1.16.5.jar'))
+
+    shade(project(":addon-core"))
+
+    minecraft 'com.github.ImpactDevelopment:Vanilla:1.16.5'
+
+    annotationProcessor("org.spongepowered:mixin:0.8.2:processor")
+    compile("net.minecraft:launchwrapper:1.12") { transitive = false }
+    compile("org.ow2.asm:asm-analysis:6.2") { transitive = false }
+    compile("org.ow2.asm:asm-util:6.2") { transitive = false }
+    compile("org.ow2.asm:asm-commons:6.2") { transitive = false }
+    compile("org.spongepowered:mixin:0.8.2") { transitive = false }
+}
+
+compileJava.doFirst {
+    copy {
+        from './../addon-core/src/main/java'
+        into './build/sources/main/java'
+    }
+    copy {
+        from './src/main/java'
+        into './build/sources/main/java'
+    }
+}
+
+processResources {
+    from './../addon-core/src/main/resources'
+}
+
+jar {
+    // Excludes the start file
+    exclude("**/launch")
+
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)) {
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
+}
