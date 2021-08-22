@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +22,7 @@ public class TwitchUtil {
   private static final JsonParser JSON_PARSER = new JsonParser();
 
   private TwitchModule twitchModule;
-  private String currentName = "";
+  private String currentName;
   private String apiToken;
   private String channelId;
   private String followers = "Loading...";
@@ -40,7 +41,7 @@ public class TwitchUtil {
     }
 
     EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
-      if (!this.currentName.equals(config.get("twitchName").getAsString())) {
+      if (!Objects.equals(this.currentName, config.get("twitchName").getAsString())) {
         this.updateName(config);
         this.currentName = config.get("twitchName").getAsString();
       }
