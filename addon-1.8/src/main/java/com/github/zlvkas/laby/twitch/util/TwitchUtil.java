@@ -45,7 +45,7 @@ public class TwitchUtil {
         this.currentName = config.get("twitchName").getAsString();
       }
 
-      if (this.twitchModule != null && this.twitchModule.isShown()) {
+      if (this.twitchModule != null && this.channelId != null && this.twitchModule.isShown()) {
         final String raw = this
             .getWebsiteContent("https://api.twitch.tv/v5/channels/" + this.channelId, true);
         if (raw == null) {
@@ -63,6 +63,7 @@ public class TwitchUtil {
     final String name = config.get("twitchName").getAsString();
     if (name.isEmpty()) {
       this.followers = "Please set the channel name in the addon settings.";
+      this.channelId = null;
       return;
     }
 
@@ -70,6 +71,7 @@ public class TwitchUtil {
         .format("https://counts.live/api/twitch-follower-count/%s/data", name), false);
     if (rawData == null) {
       this.followers = "Channel " + name + " not found.";
+      this.channelId = null;
       return;
     }
 
