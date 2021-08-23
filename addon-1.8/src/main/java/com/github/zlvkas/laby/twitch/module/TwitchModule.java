@@ -40,7 +40,7 @@ public class TwitchModule extends SimpleModule {
 
     @Override
     public String getControlName() {
-        return "";
+        return "LabyTwitch";
     }
 
     @Override
